@@ -8,3 +8,5 @@ hs_err_pid*
 .settings
 /bin/
 /target
+
+.DS_Store
