@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.mac.nasbackup.db.model.ImageDao;
+import org.mac.nasbackup.dao.GenericDao;
+import org.mac.nasbackup.dao.ImageDao;
 import org.mac.nasbackup.db.model.ImageEntry;
 import org.mac.nasbackup.img.ImageData;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class DefaultIndexBuilder implements IndexBuilder {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DefaultIndexBuilder.class);
 	
-	private final ImageDao imgDao = new ImageDao();
+	private final GenericDao imgDao = new ImageDao();
 	
 	private Collection<Pipeline> pipelines = new LinkedList<Pipeline>();
 	

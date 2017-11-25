@@ -1,5 +1,5 @@
+rootProject.name = 'nas-backup-manager'
 
 include 'core'
+project(':core').projectDir = new File('./core')
 
-
-rootProject.name = 'nas-backup-manager'

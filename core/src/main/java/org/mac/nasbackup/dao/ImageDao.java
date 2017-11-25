@@ -1,4 +1,4 @@
-package org.mac.nasbackup.db.model;
+package org.mac.nasbackup.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mac.nasbackup.db.model.ImageEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,15 +16,19 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-public class ImageDao {
+public class ImageDao implements GenericDao<ImageEntry> {
 	
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+	private final KeyHolder keyHolder = new GeneratedKeyHolder();
+
+	@Override
 	@Autowired
 	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 	}
 
+	@Override
 	public List<ImageEntry> findAll() {
 		Map<String, Object> params = new HashMap<String, Object>();
 		String sql = "SELECT * FROM imageindex";
@@ -31,7 +36,7 @@ public class ImageDao {
 		return result;
 	}
 
-	private final KeyHolder keyHolder = new GeneratedKeyHolder();
+	@Override
 	public int insert(ImageEntry entry) {
 		
 		String sql = "insert into imageindex(filename,filepath,filesize,make,model,software)" +

@@ -1,3 +1,17 @@
+CREATE TABLE devicetype (
+  id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+  label VARCHAR(300),
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE storagedevice (
+  id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+  label VARCHAR(300),
+  devicetype INTEGER,
+  FOREIGN KEY(devicetype) REFERENCES devicetype(id),
+  PRIMARY KEY (id)
+);
+
 CREATE TABLE imageindex (
   id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   filename VARCHAR(300),
@@ -6,5 +20,9 @@ CREATE TABLE imageindex (
   make VARCHAR(300),
   model VARCHAR(300),
   software VARCHAR(300),
-  CONSTRAINT primary_key PRIMARY KEY (id)
+  storagedevice INTEGER,
+  FOREIGN KEY(storagedevice) REFERENCES storagedevice(id)
 );
+
+
+

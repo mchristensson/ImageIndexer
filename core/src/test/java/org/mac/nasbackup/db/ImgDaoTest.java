@@ -8,8 +8,12 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mac.nasbackup.db.model.ImageDao;
+import org.mac.nasbackup.dao.GenericDao;
+import org.mac.nasbackup.dao.ImageDao;
+import org.mac.nasbackup.dao.StorageDeviceDao;
+import org.mac.nasbackup.db.model.DeviceType;
 import org.mac.nasbackup.db.model.ImageEntry;
+import org.mac.nasbackup.db.model.StorageDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,7 +39,7 @@ public class ImgDaoTest {
 	public void findAll_emptyDb_returnzero() {
 		logger.info("hello");
 		
-		ImageDao imgDao = new ImageDao();
+		GenericDao<ImageEntry> imgDao = new ImageDao();
 		imgDao.setNamedParameterJdbcTemplate(template);
 		List<ImageEntry> result = imgDao.findAll();
 		Assert.assertEquals("Unexpected number of entries in database", 0, result.size());
@@ -45,7 +49,7 @@ public class ImgDaoTest {
 	
 	@Test
 	public void findAll_insertInEmptyDb_returnOne() {
-		ImageDao imgDao = new ImageDao();
+		GenericDao<ImageEntry> imgDao = new ImageDao();
 		imgDao.setNamedParameterJdbcTemplate(template);
 		
 		ImageEntry entry = new ImageEntry();
@@ -59,6 +63,25 @@ public class ImgDaoTest {
 		Assert.assertEquals("Unexpected number of entries in database", 1, resultb.size());
 	}
 	
+	@Test
+	public void findAll_insertStorageDeviceInEmptyDb_returnOne() {
+		GenericDao<StorageDevice> dao = new StorageDeviceDao();
+		dao.setNamedParameterJdbcTemplate(template);
+		
+		DeviceType sdCard = new DeviceType("SD-Card");
+		sdCard.setId(23);
+
+		StorageDevice entry = new StorageDevice();
+		entry.setId(1);
+		entry.setDeviceType(sdCard);
+		dao.insert(entry);
+
+		List<StorageDevice> resultb = dao.findAll();
+		for (StorageDevice storageDevice : resultb) {
+			logger.info(storageDevice.toString());
+		}
+		Assert.assertEquals("Unexpected number of entries in database", 1, resultb.size());
+	}
 	
 	
 }
