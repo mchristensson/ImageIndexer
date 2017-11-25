@@ -1,5 +1,7 @@
 rootProject.name = 'nas-backup-manager'
 
 include 'core'
+include 'persistance'
 project(':core').projectDir = new File('./core')
+project(':persistance').projectDir = new File('./persistance')
 

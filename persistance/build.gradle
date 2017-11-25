@@ -1,0 +1,10 @@
+
+dependencies {
+    compile "org.springframework:spring-context:4.3.6.RELEASE"
+	
+	//DB - Spring ORM contains everything you need, anytime!
+	compile "org.hibernate:hibernate-core:4.3.6.Final"
+	compile "org.springframework:spring-orm:4.3.6.RELEASE"
+	compile "org.apache.derby:derby:10.11.1.1"
+	
+}
