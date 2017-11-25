@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public class ImageDaoImpl implements ImageDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageDaoImpl.class);
-	
+
 	@Autowired
 	JdbcTemplate db;
 
@@ -55,7 +55,7 @@ public class ImageDaoImpl implements ImageDao {
 			logger.debug("Found {} entries.", result.size());
 		}
 		if (logger.isWarnEnabled() && result.size() >= maxResult) {
-			logger.warn("Find limit ({}) reached!", maxResult); 
+			logger.warn("Find limit ({}) reached!", maxResult);
 		}
 		return result;
 	}

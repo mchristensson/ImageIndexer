@@ -1,14 +1,9 @@
-CREATE TABLE devicetype (
-  devicetype_id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  label VARCHAR(300),
-  PRIMARY KEY (devicetype_id)
-);
+
 
 CREATE TABLE storagedevice (
   storagedevice_id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   label VARCHAR(300),
-  devicetype INTEGER,
-  FOREIGN KEY(devicetype) REFERENCES devicetype(devicetype_id),
+  devicetype VARCHAR(300) not null,
   PRIMARY KEY (storagedevice_id)
 );
 

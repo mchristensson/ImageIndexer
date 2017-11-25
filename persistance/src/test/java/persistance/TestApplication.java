@@ -8,8 +8,9 @@ import org.junit.Test;
 import org.mac.nasbackup.persistance.app.ApplicationConfig;
 import org.mac.nasbackup.persistance.model.DeviceType;
 import org.mac.nasbackup.persistance.model.ImageEntry;
-import org.mac.nasbackup.persistance.service.DeviceTypeService;
+import org.mac.nasbackup.persistance.model.StorageDevice;
 import org.mac.nasbackup.persistance.service.ImageEntryService;
+import org.mac.nasbackup.persistance.service.StorageDeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -30,10 +31,26 @@ public class TestApplication {
 		context.close();
 	}
 	
+	
 	@Test
 	public void runAppTest() {
 		ImageEntryService imgService = (ImageEntryService) context.getBean("imageService");
-		DeviceTypeService deviceTypeService = (DeviceTypeService) context.getBean("deviceTypeService");
+		StorageDeviceService deviceTypeService = (StorageDeviceService) context.getBean("storageDeviceService");
+		
+		StorageDevice storageDevice0 = new StorageDevice();
+        storageDevice0.setDeviceType(DeviceType.EXT_HD);
+        storageDevice0.setLabel("Gammalsunk 2.5 tum");
+        deviceTypeService.addStorageDevice(storageDevice0);
+        StorageDevice storageDevice1 = new StorageDevice();
+        storageDevice1.setDeviceType(DeviceType.MOBILE_PHONE);
+        storageDevice1.setLabel("Klaras IPhone 4");
+        deviceTypeService.addStorageDevice(storageDevice1);
+        
+        logger.info("Find all StorageDevices...");
+        List<StorageDevice> storageDevices = deviceTypeService.findAll();
+        for (StorageDevice storageDevice: storageDevices) {
+            logger.info("{}", storageDevice);
+        }
 		
 		ImageEntry file0 = new ImageEntry();
 		file0.setFileName("abc.001");
@@ -42,6 +59,7 @@ public class TestApplication {
 		file0.setMake("Sony");
 		file0.setSize(23456);
 		file0.setSoftware("Paintbrush");
+
 		imgService.addImageEntry(file0);
         
 		logger.info("Find all ImageEntries...");
@@ -51,13 +69,6 @@ public class TestApplication {
         }
         
         
-        DeviceType deviceType0 = new DeviceType("Local URI");
-        deviceTypeService.addDeviceType(deviceType0);
         
-        logger.info("Find all DeviceTypes...");
-        List<DeviceType> deviceTypes = deviceTypeService.findAll();
-        for (DeviceType deviceType: deviceTypes) {
-            logger.info("{}", deviceType);
-        }
 	}
 }

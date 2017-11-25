@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service("imageService")
 public class ImageServiceImpl implements ImageEntryService {
-	
+
 	@Autowired
-    ImageDao imageDao;
-	
+	ImageDao imageDao;
+
 	@Override
 	public void addImageEntry(ImageEntry imageEntry) {
 		imageDao.addImageEntry(imageEntry);

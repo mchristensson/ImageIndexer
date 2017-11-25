@@ -6,9 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-@Entity(name="ImageEntry")
-@Table(name="imageFiles")
+@Entity(name = "ImageEntry")
+@Table(name = "imageFiles")
 public class ImageEntry {
 	private long id;
 	private int size;
@@ -18,17 +17,17 @@ public class ImageEntry {
 	private String model;
 	private String software;
 
-	@Column(name="origin_software", nullable=true)
+	@Column(name = "origin_software", nullable = true)
 	public String getSoftware() {
 		return software;
 	}
-	
-	@Column(name="origin_make", nullable=true)
+
+	@Column(name = "origin_make", nullable = true)
 	public String getMake() {
 		return make;
 	}
 
-	@Column(name="origin_model", nullable=true)
+	@Column(name = "origin_model", nullable = true)
 	public String getModel() {
 		return model;
 	}
@@ -36,25 +35,25 @@ public class ImageEntry {
 	public void setId(int int1) {
 		this.id = int1;
 	}
-	
-	@Column(name="file_id", nullable=false)
+
+	@Column(name = "file_id", nullable = false)
 	@Id
 	@GeneratedValue
 	public long getId() {
 		return id;
 	}
 
-	@Column(name="file_size", nullable=false)
+	@Column(name = "file_size", nullable = false)
 	public int getSize() {
 		return size;
 	}
 
-	@Column(name="file_name", nullable=false)
+	@Column(name = "file_name", nullable = false)
 	public String getFileName() {
 		return this.fileName;
 	}
 
-	@Column(name="file_path", nullable=false)
+	@Column(name = "file_path", nullable = false)
 	public String getFilePath() {
 		return this.filePath;
 	}
@@ -69,11 +68,6 @@ public class ImageEntry {
 
 	public void setFileName(String string) {
 		this.fileName = string;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("ImageEntry [id=%s, size=%s, fileName=%s, filePath=%s]", id, size, fileName, filePath);
 	}
 
 	public void setSizeFromString(String s) {
@@ -92,6 +86,12 @@ public class ImageEntry {
 
 	public void setSoftware(String software) {
 		this.software = software;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ImageEntry [id=%s, size=%s, fileName=%s, filePath=%s, make=%s, model=%s, software=%s]",
+				id, size, fileName, filePath, make, model, software);
 	}
 
 }
