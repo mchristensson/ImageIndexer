@@ -2,8 +2,11 @@ package org.mac.nasbackup.persistance.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity(name = "ImageEntry")
@@ -16,6 +19,8 @@ public class ImageEntry {
 	private String make;
 	private String model;
 	private String software;
+
+	private StorageDevice storageDevice;
 
 	@Column(name = "origin_software", nullable = true)
 	public String getSoftware() {
@@ -58,6 +63,12 @@ public class ImageEntry {
 		return this.filePath;
 	}
 
+	@ManyToOne(targetEntity = StorageDevice.class)
+	@JoinColumn(name = "storagedevice")
+	public StorageDevice getStorageDevice() {
+		return storageDevice;
+	}
+
 	public void setSize(int int1) {
 		this.size = int1;
 	}
@@ -90,8 +101,13 @@ public class ImageEntry {
 
 	@Override
 	public String toString() {
-		return String.format("ImageEntry [id=%s, size=%s, fileName=%s, filePath=%s, make=%s, model=%s, software=%s]",
-				id, size, fileName, filePath, make, model, software);
+		return String.format(
+				"ImageEntry [id=%s, size=%s, fileName=%s, filePath=%s, make=%s, model=%s, software=%s, storageDevice=%s]",
+				id, size, fileName, filePath, make, model, software, storageDevice);
+	}
+
+	public void setStorageDevice(StorageDevice storageDevice) {
+		this.storageDevice = storageDevice;
 	}
 
 }

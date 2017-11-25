@@ -59,6 +59,7 @@ public class TestApplication {
 		file0.setMake("Sony");
 		file0.setSize(23456);
 		file0.setSoftware("Paintbrush");
+		file0.setStorageDevice(storageDevice0);
 
 		imgService.addImageEntry(file0);
         
