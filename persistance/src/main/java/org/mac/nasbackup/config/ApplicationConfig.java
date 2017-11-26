@@ -1,4 +1,4 @@
-package org.mac.nasbackup.persistance.app;
+package org.mac.nasbackup.config;
 
 import java.util.Properties;
 

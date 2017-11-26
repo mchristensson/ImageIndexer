@@ -2,7 +2,6 @@ package org.mac.nasbackup.core;
 
 import java.nio.file.Path;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public interface IndexBuilder {
 
@@ -10,7 +9,7 @@ public interface IndexBuilder {
 
 	public IndexBuilder setDestination(Path path);
 
-	public Long startIndex(NamedParameterJdbcTemplate template);
+	public Long startIndex();
 
 	Object transformData();
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mac.nasbackup.persistance.dao.ImageDao;
 import org.mac.nasbackup.persistance.model.ImageEntry;
+import org.mac.nasbackup.persistance.model.StorageDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,12 @@ public class ImageDaoImpl implements ImageDao {
 			logger.warn("Find limit ({}) reached!", maxResult);
 		}
 		return result;
+	}
+
+	@Override
+	public void identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mac.nasbackup.persistance.app.ApplicationConfig;
+import org.mac.nasbackup.config.ApplicationConfig;
 import org.mac.nasbackup.persistance.model.DeviceType;
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
@@ -40,11 +40,11 @@ public class TestApplication {
 		StorageDevice storageDevice0 = new StorageDevice();
         storageDevice0.setDeviceType(DeviceType.EXT_HD);
         storageDevice0.setLabel("Gammalsunk 2.5 tum");
-        deviceTypeService.addStorageDevice(storageDevice0);
+        deviceTypeService.addStorageDevice(storageDevice0, false);
         StorageDevice storageDevice1 = new StorageDevice();
         storageDevice1.setDeviceType(DeviceType.MOBILE_PHONE);
         storageDevice1.setLabel("Klaras IPhone 4");
-        deviceTypeService.addStorageDevice(storageDevice1);
+        deviceTypeService.addStorageDevice(storageDevice1, false);
         
         logger.info("Find all StorageDevices...");
         List<StorageDevice> storageDevices = deviceTypeService.findAll();

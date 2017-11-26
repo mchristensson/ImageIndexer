@@ -1,5 +1,6 @@
 package org.mac.nasbackup.persistance.model;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,6 +20,7 @@ public class StorageDevice {
 	private String label;
 	private long id;
 	private DeviceType deviceType;
+	private String path;
 
 	public StorageDevice() {
 	}
@@ -56,5 +58,14 @@ public class StorageDevice {
 	@Override
 	public String toString() {
 		return String.format("StorageDevice [id=%s, deviceType=%s, label=%s]", id, deviceType, label);
+	}
+	
+	@Column(name = "path", nullable = false)
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 }
