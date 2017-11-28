@@ -2,6 +2,7 @@ package org.mac.nasbackup.persistance.service;
 
 import java.util.List;
 
+import org.mac.nasbackup.analyzer.Operation;
 import org.mac.nasbackup.persistance.model.StorageDevice;
 
 public interface StorageDeviceService {
@@ -9,16 +10,17 @@ public interface StorageDeviceService {
 	/**
 	 * Adds a new storage device to database
 	 * @param storageDevice
-	 * @param insertFiles Whether files should be added to database or not 
 	 */
-	public void addStorageDevice(StorageDevice storageDevice, boolean insertFiles);
+	public void addStorageDevice(StorageDevice storageDevice);
 
 	/**
 	 * Validates whether storage device's files are present in reference device
+	 * 
 	 * @param storageDevice the storage device to analyze
 	 * @param reference reference target device (Read only)
+	 * @param operation
 	 */
-	public void analyzeStorageDeviceFiles(StorageDevice storageDevice, StorageDevice reference);
+	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation);
 	
 	public StorageDevice find(long id);
 

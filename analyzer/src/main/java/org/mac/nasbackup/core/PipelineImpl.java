@@ -1,7 +1,7 @@
 package org.mac.nasbackup.core;
 
 import java.nio.file.Path;
-
+@Deprecated
 public class PipelineImpl implements Pipeline {
 	private Path source;
 	private boolean recursive;

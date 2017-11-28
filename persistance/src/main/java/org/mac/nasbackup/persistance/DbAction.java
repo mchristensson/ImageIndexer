@@ -4,7 +4,10 @@ import org.mac.nasbackup.persistance.model.ImageEntry;
 
 public interface DbAction<T> {
 
-	void perform(ImageEntry imageEntry);
+	void performInsert(ImageEntry imageEntry);
+
+	int checkExistance(ImageEntry imageEntry);
+	
 
 }
 

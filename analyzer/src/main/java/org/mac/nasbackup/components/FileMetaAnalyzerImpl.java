@@ -6,6 +6,9 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.mac.nasbackup.analyzer.AnalysisConfiguration;
+import org.mac.nasbackup.analyzer.AnalysisConfigurationImpl;
+import org.mac.nasbackup.analyzer.AnalysisResultStatus;
 import org.mac.nasbackup.img.ImageData;
 import org.mac.nasbackup.persistance.DbAction;
 import org.mac.nasbackup.persistance.model.ImageEntry;
@@ -20,42 +23,51 @@ import com.drew.imaging.ImageProcessingException;
 @Repository
 @Qualifier("fileAnalyzer")
 public class FileMetaAnalyzerImpl implements FileMetaAnalyzer {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FileMetaAnalyzerImpl.class);
 
 	@Override
-	public void analyzeFolder(final Path path, final boolean recursive, DbAction<ImageEntry> insertAction) {
+	public void analyzeFolder(final Path path, final boolean recursive, DbAction<ImageEntry> dbAction) {
+		final AnalysisConfiguration cfg = new AnalysisConfigurationImpl();
+		
 		try {
 			Files.list(path).forEach(new Consumer<Path>() {
-
 				@Override
 				public void accept(Path t) {
-					
+
 					if (Files.isDirectory(t) && recursive) {
-						analyzeFolder(t, recursive, insertAction);
+						analyzeFolder(t, recursive, dbAction);
 					} else {
-						indexImage(t);
+						handleImage(t);
 					}
 				}
 
-				private void indexImage(Path t)  {
-					
-						try {
-							ImageEntry imageEntry =	convertToImageEntry(t);
-							insertAction.perform(imageEntry);
-							
-
-						} catch (ImageProcessingException | IOException e) {
-							logger.warn(e.getMessage() + " " + t.toString());
+				private void handleImage(Path t) {
+					try {
+						ImageEntry imageEntry = convertToImageEntry(t);
+						
+						int result = dbAction.checkExistance(imageEntry);
+						cfg.addCount();
+						if (AnalysisResultStatus.FULL_MATCH == result) {
+							cfg.addSuccess();
+						} else if (AnalysisResultStatus.MISSING == result) {
+							dbAction.performInsert(imageEntry);	
+						} else {
+							cfg.addException(result, imageEntry);
 						}
+						
+						
+					} catch (ImageProcessingException | IOException e) {
+						logger.warn(e.getMessage() + " " + t.toString());
+					}
 
 				}
 			});
 		} catch (IOException e) {
-			logger.error("Unable to process path " + path.toString() , e);
+			logger.error("Unable to process path " + path.toString(), e);
 		}
 	}
-	
+
 	public ImageEntry convertToImageEntry(Path t) throws ImageProcessingException, IOException {
 		ImageEntry entry = new ImageEntry();
 		Map<String, String> map = ImageData.getMetaDataMap(t.toFile());

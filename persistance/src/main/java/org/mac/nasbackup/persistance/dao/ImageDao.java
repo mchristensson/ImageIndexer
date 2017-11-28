@@ -18,6 +18,7 @@ public interface ImageDao {
 	 * 
 	 * @param referenceDevice The device to search on
 	 * @param imageEntry The entity to look for
+	 * @return 
 	 */
-	public void identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry);
+	public int identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry);
 }

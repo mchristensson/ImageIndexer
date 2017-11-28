@@ -40,11 +40,15 @@ public class TestApplication {
 		StorageDevice storageDevice0 = new StorageDevice();
         storageDevice0.setDeviceType(DeviceType.EXT_HD);
         storageDevice0.setLabel("Gammalsunk 2.5 tum");
-        deviceTypeService.addStorageDevice(storageDevice0, false);
+        deviceTypeService.addStorageDevice(storageDevice0);
         StorageDevice storageDevice1 = new StorageDevice();
         storageDevice1.setDeviceType(DeviceType.MOBILE_PHONE);
         storageDevice1.setLabel("Klaras IPhone 4");
-        deviceTypeService.addStorageDevice(storageDevice1, false);
+        deviceTypeService.addStorageDevice(storageDevice1);
+        StorageDevice storageDevice2 = new StorageDevice();
+        storageDevice1.setDeviceType(DeviceType.NAS);
+        storageDevice1.setLabel("Klaras IPhone 4");
+        deviceTypeService.addStorageDevice(storageDevice1);
         
         logger.info("Find all StorageDevices...");
         List<StorageDevice> storageDevices = deviceTypeService.findAll();
@@ -68,7 +72,6 @@ public class TestApplication {
         for (ImageEntry file: files) {
             logger.info("{}", file);
         }
-        
         
         
 	}

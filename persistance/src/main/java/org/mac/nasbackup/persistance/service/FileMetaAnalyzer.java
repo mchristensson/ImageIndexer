@@ -8,6 +8,13 @@ import org.mac.nasbackup.persistance.model.ImageEntry;
 
 public interface FileMetaAnalyzer {
 
-	void analyzeFolder(final Path path, final boolean recursive, DbAction<ImageEntry> insertAction);
+	/**
+	 * Defines a file-tree traverse operation.
+	 *  
+	 * @param path File path to traverse from
+	 * @param recursive Whether analysis should include sub-directories
+	 * @param dbAction Database-operation to invoke for each file
+	 */
+	void analyzeFolder(final Path path, final boolean recursive, final DbAction<ImageEntry> dbAction);
 
 }

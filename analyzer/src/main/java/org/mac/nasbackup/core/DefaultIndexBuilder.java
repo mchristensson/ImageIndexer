@@ -19,6 +19,7 @@ import com.drew.imaging.ImageProcessingException;
 
 import ch.qos.logback.core.joran.spi.NoAutoStart;
 
+@Deprecated
 public class DefaultIndexBuilder implements IndexBuilder {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DefaultIndexBuilder.class);

@@ -62,7 +62,7 @@ public class ImageDaoImpl implements ImageDao {
 	}
 
 	@Override
-	public void identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry) {
+	public int identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not yet implemented");
 	}

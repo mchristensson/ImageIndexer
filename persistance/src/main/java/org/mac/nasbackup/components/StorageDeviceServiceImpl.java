@@ -1,8 +1,11 @@
 package org.mac.nasbackup.components;
 
-import java.util.Iterator;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.mac.nasbackup.analyzer.Operation;
 import org.mac.nasbackup.persistance.DbAction;
 import org.mac.nasbackup.persistance.dao.ImageDao;
 import org.mac.nasbackup.persistance.dao.StorageDeviceDao;
@@ -18,10 +21,10 @@ public class StorageDeviceServiceImpl implements StorageDeviceService {
 
 	@Autowired
 	StorageDeviceDao storageDeviceDao;
-	
+
 	@Autowired
 	ImageDao imageDao;
-	
+
 	@Autowired
 	FileMetaAnalyzer fileAnalyzer;
 
@@ -36,32 +39,36 @@ public class StorageDeviceServiceImpl implements StorageDeviceService {
 	}
 
 	@Override
-	public void addStorageDevice(StorageDevice storageDevice, boolean insertFiles) {
-		if (insertFiles) {
-			throw new UnsupportedOperationException("Insertion of file data not yet supported.");			
-		}
+	public void addStorageDevice(StorageDevice storageDevice) {
 		storageDeviceDao.addStorageDevice(storageDevice);
 	}
 
 	@Override
-	public void analyzeStorageDeviceFiles(StorageDevice storageDevice, StorageDevice reference) {
-		// TODO Auto-generated method stub
-		//throw new UnsupportedOperationException("Analysis of file data not yet supported.");
+	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation) {
+
+		// Ta fram sökvägen till mappen som ska analyseras
+		Path p = Paths.get(new File(storageDevice.getPath()).toURI());
 		
-		//Analyze every file on 'storageDevice'
-		//Collection storageDeviceFiles;
-		//for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-			
-			fileAnalyzer.analyzeFolder(null, true, new DbAction<ImageEntry>() {
+		//Vad är det för operation vi vill göra?
+		// - kontrollera vilka filer som redan finns (100% match)
+		// - kontrollera vilka filer som redan finns, gör insert på de som inte finns
+		// - identifiera filer som inte matchar till 100%
+		//Anropa analysatorn
+		fileAnalyzer.analyzeFolder(p, true, new DbAction<ImageEntry>() {
+
+			@Override
+			public void performInsert(ImageEntry imageEntry) {
+				// imageDao.addImageEntry(imageEntry);
 				
-				@Override
-				public void perform(ImageEntry imageEntry) {
-					imageDao.addImageEntry(imageEntry);
-				}
-			});
-			
-	//		imageDao.findOnDevice(reference.getId(), )
-		
+			}
+
+			@Override
+			public int checkExistance(ImageEntry imageEntry) {
+				imageDao.identifyOnDevice(reference, imageEntry);
+				return 0;
+			}
+		});
+
 	}
 
 }
