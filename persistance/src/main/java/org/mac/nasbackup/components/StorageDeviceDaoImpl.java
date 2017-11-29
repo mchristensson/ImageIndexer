@@ -27,8 +27,10 @@ public class StorageDeviceDaoImpl implements StorageDeviceDao {
 		}
 		db.update("INSERT INTO storagedevice (label, devicetype) VALUES (?, ?)", storageDevice.getLabel(),
 				storageDevice.getDeviceType().name());
+		int id = db.queryForObject("SELECT max(i.storagedevice_id) FROM storagedevice i", Integer.class);
+		storageDevice.setId(id);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Entity inserted.", storageDevice);
+			logger.debug("Entity inserted. id={}", id);
 		}
 	}
 

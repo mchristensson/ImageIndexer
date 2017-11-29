@@ -3,6 +3,7 @@ package org.mac.nasbackup.persistance.service;
 import java.util.List;
 
 import org.mac.nasbackup.analyzer.Operation;
+import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
 
 public interface StorageDeviceService {
@@ -25,6 +26,16 @@ public interface StorageDeviceService {
 	public StorageDevice find(long id);
 
 	public List<StorageDevice> findAll();
+
+	
+	/**
+	 * Validates whether storage device's files are present in reference device
+	 * 
+	 * @param entry
+	 * @param reference
+	 * @param operation
+	 */
+	public int joinDevices(ImageEntry entry, StorageDevice reference, Operation operation);
 	
 	
 }

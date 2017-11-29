@@ -32,6 +32,7 @@ public class ApplicationConfig {
 
 	@Bean
 	public LocalSessionFactoryBean sessionFactory() {
+		
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setPackagesToScan(new String[] { "org.mac.nasbackup.persistance.model" });

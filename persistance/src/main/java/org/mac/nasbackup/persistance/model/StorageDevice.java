@@ -1,16 +1,15 @@
 package org.mac.nasbackup.persistance.model;
 
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,11 +20,13 @@ public class StorageDevice {
 	private long id;
 	private DeviceType deviceType;
 	private String path;
+	private List<ImageEntry> imageEntries;
 
 	public StorageDevice() {
+		imageEntries = new ArrayList<ImageEntry>();
 	}
 
-	@Column(name = "label", nullable = false)
+	@Column(name = "label", nullable = false, unique=true)
 	public String getLabel() {
 		return label;
 	}
@@ -34,7 +35,7 @@ public class StorageDevice {
 		this.label = label;
 	}
 
-	public void setId(int int1) {
+	public void setId(long  int1) {
 		this.id = int1;
 	}
 
@@ -68,4 +69,15 @@ public class StorageDevice {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	@OneToMany(targetEntity = ImageEntry.class)
+	@JoinColumn(name = "storagedevice", referencedColumnName="storagedevice_id")
+	public List<ImageEntry> getImageEntries() {
+		return imageEntries;
+	}
+
+	public void setImageEntries(List<ImageEntry> imageEntries) {
+		this.imageEntries = imageEntries;
+	}
+	
 }

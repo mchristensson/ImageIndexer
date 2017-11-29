@@ -1,8 +1,10 @@
 package org.mac.nasbackup.components;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.mac.nasbackup.persistance.dao.ImageDao;
+import org.mac.nasbackup.persistance.mapper.ImageFileCallbackHandler;
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
 import org.slf4j.Logger;
@@ -24,16 +26,15 @@ public class ImageDaoImpl implements ImageDao {
 
 	@Override
 	public void addImageEntry(ImageEntry imageEntry) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding entity... {}", imageEntry);
-		}
 		db.update(
 				"INSERT INTO imageFiles (file_name, file_path, origin_make, "
-						+ "origin_model, file_size, origin_software) VALUES (?, ?, ?, ?, ?, ?)",
+						+ "origin_model, file_size, origin_software, storagedevice) VALUES (?, ?, ?, ?, ?, ?, ?)",
 				imageEntry.getFileName(), imageEntry.getFilePath(), imageEntry.getMake(), imageEntry.getModel(),
-				imageEntry.getSize(), imageEntry.getSoftware());
+				imageEntry.getSize(), imageEntry.getSoftware(), imageEntry.getStorageDevice().getId());
+		int id = db.queryForObject("SELECT max(i.file_id) FROM imageFiles i", Integer.class);
+		imageEntry.setId(id);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Entity inserted.", imageEntry);
+			logger.debug("Entity inserted. {}", imageEntry);
 		}
 	}
 
@@ -47,11 +48,14 @@ public class ImageDaoImpl implements ImageDao {
 	}
 
 	@Override
-	public List<ImageEntry> findAll() {
+	public Collection<ImageEntry> findAll() {
 		int maxResult = 100;
 		db.setMaxRows(100);
-		List<ImageEntry> result = (List<ImageEntry>) db.query("SELECT * FROM imageFiles",
-				new BeanPropertyRowMapper<ImageEntry>(ImageEntry.class));
+		ImageFileCallbackHandler imageFileCallbackHandler = new ImageFileCallbackHandler();
+		db.query(
+				"SELECT i.*,d.* FROM imageFiles i left outer join StorageDevice d on d.storagedevice_id = i.storagedevice",
+				imageFileCallbackHandler, new Object[] {});
+		Collection<ImageEntry> result = imageFileCallbackHandler.getImageEntries();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Found {} entries.", result.size());
 		}
@@ -63,8 +67,18 @@ public class ImageDaoImpl implements ImageDao {
 
 	@Override
 	public int identifyOnDevice(StorageDevice referenceDevice, ImageEntry imageEntry) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Searching for entry within device '{}' of type '{}'...", referenceDevice.getLabel(),
+					referenceDevice.getDeviceType().name());
+		}
+		ImageFileCallbackHandler imageFileCallbackHandler = new ImageFileCallbackHandler();
 
+		db.query(
+				"SELECT i.*,d.* FROM imageFiles i "
+				+ "left outer join StorageDevice as d on d.storagedevice_id = i.storagedevice "
+				+ "where (i.storagedevice=?) AND (i.file_name =?) AND (i.file_size = ?)",
+				imageFileCallbackHandler, new Object[] { referenceDevice.getId(), imageEntry.getFileName(), imageEntry.getSize() });
+		Collection<ImageEntry> result = imageFileCallbackHandler.getImageEntries();
+		return result.size();
+	}
 }

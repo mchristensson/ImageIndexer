@@ -64,11 +64,15 @@ public class StorageDeviceServiceImpl implements StorageDeviceService {
 
 			@Override
 			public int checkExistance(ImageEntry imageEntry) {
-				imageDao.identifyOnDevice(reference, imageEntry);
-				return 0;
+				return imageDao.identifyOnDevice(reference, imageEntry);
 			}
 		});
 
+	}
+
+	@Override
+	public int joinDevices(ImageEntry imageEntry, StorageDevice reference, Operation operation) {
+		return imageDao.identifyOnDevice(reference, imageEntry);
 	}
 
 }

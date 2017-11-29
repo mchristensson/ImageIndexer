@@ -37,7 +37,7 @@ public class ImageEntry {
 		return model;
 	}
 
-	public void setId(int int1) {
+	public void setId(long int1) {
 		this.id = int1;
 	}
 
@@ -64,7 +64,7 @@ public class ImageEntry {
 	}
 
 	@ManyToOne(targetEntity = StorageDevice.class)
-	@JoinColumn(name = "storagedevice")
+	@JoinColumn(name = "storagedevice", referencedColumnName="storagedevice_id")
 	public StorageDevice getStorageDevice() {
 		return storageDevice;
 	}

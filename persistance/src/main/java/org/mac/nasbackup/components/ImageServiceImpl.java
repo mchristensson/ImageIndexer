@@ -1,6 +1,6 @@
 package org.mac.nasbackup.components;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.mac.nasbackup.persistance.dao.ImageDao;
 import org.mac.nasbackup.persistance.model.ImageEntry;
@@ -25,7 +25,7 @@ public class ImageServiceImpl implements ImageEntryService {
 	}
 
 	@Override
-	public List<ImageEntry> findAll() {
+	public Collection<ImageEntry> findAll() {
 		return imageDao.findAll();
 	}
 
