@@ -36,6 +36,4 @@ public interface StorageDeviceService {
 	 * @param operation
 	 */
 	public int joinDevices(ImageEntry entry, StorageDevice reference, Operation operation);
-	
-	
 }

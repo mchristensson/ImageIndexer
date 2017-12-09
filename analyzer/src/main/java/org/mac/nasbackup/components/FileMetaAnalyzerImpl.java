@@ -3,6 +3,7 @@ package org.mac.nasbackup.components;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -26,9 +27,10 @@ public class FileMetaAnalyzerImpl implements FileMetaAnalyzer {
 
 	private static final Logger logger = LoggerFactory.getLogger(FileMetaAnalyzerImpl.class);
 
+	private final AnalysisConfiguration cfg = new AnalysisConfigurationImpl();
+	
 	@Override
 	public void analyzeFolder(final Path path, final boolean recursive, DbAction<ImageEntry> dbAction) {
-		final AnalysisConfiguration cfg = new AnalysisConfigurationImpl();
 		
 		try {
 			Files.list(path).forEach(new Consumer<Path>() {
@@ -49,16 +51,16 @@ public class FileMetaAnalyzerImpl implements FileMetaAnalyzer {
 						int result = dbAction.checkExistance(imageEntry);
 						cfg.addCount();
 						if (AnalysisResultStatus.FULL_MATCH == result) {
-							cfg.addSuccess();
+							dbAction.handleMatch(cfg, imageEntry);
 						} else if (AnalysisResultStatus.MISSING == result) {
-							dbAction.performInsert(imageEntry);	
+							dbAction.handleMissing(cfg,imageEntry);	
 						} else {
-							cfg.addException(result, imageEntry);
+							dbAction.handleDefault(cfg, result, imageEntry);
 						}
 						
 						
 					} catch (ImageProcessingException | IOException e) {
-						logger.warn(e.getMessage() + " " + t.toString());
+						logger.error(e.getMessage() + " " + t.toString());
 					}
 
 				}
@@ -66,6 +68,11 @@ public class FileMetaAnalyzerImpl implements FileMetaAnalyzer {
 		} catch (IOException e) {
 			logger.error("Unable to process path " + path.toString(), e);
 		}
+	}
+	
+	@Override
+	public List<String> getResult() {
+		return cfg.getAnalysisResult();
 	}
 
 	public ImageEntry convertToImageEntry(Path t) throws ImageProcessingException, IOException {

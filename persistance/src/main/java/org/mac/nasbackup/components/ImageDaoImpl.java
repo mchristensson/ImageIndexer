@@ -1,12 +1,15 @@
 package org.mac.nasbackup.components;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
+import org.mac.nasbackup.analyzer.ImageEntryComparator;
 import org.mac.nasbackup.persistance.dao.ImageDao;
 import org.mac.nasbackup.persistance.mapper.ImageFileCallbackHandler;
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
+import org.mac.nasbackup.persistance.service.Match;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ public class ImageDaoImpl implements ImageDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageDaoImpl.class);
 
+	private static final Comparator<ImageEntry> comparator = new ImageEntryComparator();
+	
 	@Autowired
 	JdbcTemplate db;
 
@@ -73,12 +78,36 @@ public class ImageDaoImpl implements ImageDao {
 		}
 		ImageFileCallbackHandler imageFileCallbackHandler = new ImageFileCallbackHandler();
 
+		// Force match on reference-device
+		// Force match on file-size
+		// soft-match on...
 		db.query(
 				"SELECT i.*,d.* FROM imageFiles i "
-				+ "left outer join StorageDevice as d on d.storagedevice_id = i.storagedevice "
-				+ "where (i.storagedevice=?) AND (i.file_name =?) AND (i.file_size = ?)",
-				imageFileCallbackHandler, new Object[] { referenceDevice.getId(), imageEntry.getFileName(), imageEntry.getSize() });
+						+ "left outer join StorageDevice as d on d.storagedevice_id = i.storagedevice "
+						+ "where (i.storagedevice=?) AND (i.file_name =?) AND (i.file_size = ?)",
+				imageFileCallbackHandler,
+				new Object[] { referenceDevice.getId(), imageEntry.getFileName(), imageEntry.getSize() });
 		Collection<ImageEntry> result = imageFileCallbackHandler.getImageEntries();
-		return result.size();
+
+		return match(imageEntry, result);
+
 	}
+
+	private static int match(ImageEntry imageEntry, Collection<ImageEntry> result) {
+		if (result == null || result.isEmpty()) {
+			return Match.NO_MATCH;
+		} else if (result.size() > 0) {
+			for(ImageEntry entry : result) {
+				int r = comparator.compare(imageEntry, entry);
+				if (Match.MATCH_ON_FILE_AND_SIZE == r || Match.MATCH_ON_FILE_AND_SIZE_AND_MAKE_AND_MODEL_AND_SOFTWARE == r|| Match.FULL_MATCH_AND_SAME_DEVICE == r) {
+					return r;
+				}
+			}
+			return Match.NO_MATCH;
+		} else {
+			return Match.ERROR;			
+		}
+	}
+	
+	
 }

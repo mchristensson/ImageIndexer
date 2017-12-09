@@ -13,6 +13,7 @@ import org.mac.nasbackup.persistance.model.DeviceType;
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
 import org.mac.nasbackup.persistance.service.ImageEntryService;
+import org.mac.nasbackup.persistance.service.Match;
 import org.mac.nasbackup.persistance.service.StorageDeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,7 @@ public class TestApplication {
 		file0.setMake("Sony");
 		file0.setSize(23456);
 		file0.setSoftware("Paintbrush");
-		file0.setStorageDevice(storageDevice0);
+		file0.setStorageDevice(storageDevice1);
 		imgService.addImageEntry(file0);
         
 		logger.info("Find all ImageEntries...");
@@ -98,10 +99,21 @@ public class TestApplication {
         logger.info("Found {} entries in total. ", files.size());
         
         logger.info("Find ImageEntry matches in database...");
-        Assert.assertEquals("Did not expect to find this file on this device",0, deviceTypeService.joinDevices(file0, storageDevice2, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
-        Assert.assertEquals("Did not expect to find this file on this device",0, deviceTypeService.joinDevices(file0, storageDevice1, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
-        Assert.assertEquals("Did expect to find this file on this device",1, deviceTypeService.joinDevices(file0, storageDevice0, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
+        Assert.assertEquals("Did not expect to find this file on this device",Match.NO_MATCH, deviceTypeService.joinDevices(file0, storageDevice2, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
+        Assert.assertEquals("Actually expected to find this file on this device",Match.FULL_MATCH_AND_SAME_DEVICE, deviceTypeService.joinDevices(file0, storageDevice1, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
+        Assert.assertEquals("Did not expect to find this file on this device",Match.NO_MATCH, deviceTypeService.joinDevices(file0, storageDevice0, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
         
+        ImageEntry file4 = new ImageEntry();
+        file4.setFileName("abc.001");
+        file4.setFilePath("c:/sdf/sdf/kljlkj/");
+        file4.setModel("dfhgdgfd");
+        file4.setMake("hgfdhgdhgf");
+        file4.setSize(23456);
+        file4.setSoftware("hgfdhgfdhgfd");
+        file4.setStorageDevice(null);
+		Assert.assertEquals("Actually expected to find this file on this device",Match.MATCH_ON_FILE_AND_SIZE, deviceTypeService.joinDevices(file4, storageDevice1, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
+		file4.setSize(6758675);
+		Assert.assertEquals("Actually expected to find this file on this device",Match.NO_MATCH, deviceTypeService.joinDevices(file4, storageDevice1, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
 		
 	}
 }

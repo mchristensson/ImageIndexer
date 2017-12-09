@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity(name = "ImageEntry")
 @Table(name = "imageFiles")
-public class ImageEntry {
+public class ImageEntry implements Comparable<ImageEntry>{
 	private long id;
 	private int size;
 	private String fileName;
@@ -109,5 +109,19 @@ public class ImageEntry {
 	public void setStorageDevice(StorageDevice storageDevice) {
 		this.storageDevice = storageDevice;
 	}
+
+	@Override
+	public int compareTo(ImageEntry o) {
+		if (this.fileName.equals(o.getFileName()) && 
+				this.getMake().equals(o.getMake())&& 
+				this.getModel().equals(o.getModel())&& 
+				this.getSize() == o.getSize()&& 
+				this.getSoftware() == o.getSoftware()) {
+			
+		} 
+		return 0;
+	}
+	
+	
 
 }
