@@ -1,11 +1,14 @@
 package org.mac.nasbackup.persistance;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mac.nasbackup.analyzer.Operation;
 import org.mac.nasbackup.config.ApplicationConfig;
@@ -24,6 +27,8 @@ public class TestApplication {
 	
 	private static AbstractApplicationContext context;
 	private static final Logger logger = LoggerFactory.getLogger(TestApplication.class);
+	private ImageEntryService imgService;
+	private StorageDeviceService deviceTypeService;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -35,16 +40,15 @@ public class TestApplication {
 		context.close();
 	}
 	
+	@Before
+	public void initServices() {
+		 imgService = (ImageEntryService) context.getBean("imageService");
+		 deviceTypeService = (StorageDeviceService) context.getBean("storageDeviceService");
+	}
 	
+	@Ignore
 	@Test
 	public void runAppTest() {
-		ImageEntryService imgService = (ImageEntryService) context.getBean("imageService");
-		StorageDeviceService deviceTypeService = (StorageDeviceService) context.getBean("storageDeviceService");
-		
-		
-		
-			
-		
 		StorageDevice storageDevice0 = new StorageDevice();
         storageDevice0.setDeviceType(DeviceType.EXT_HD);
         storageDevice0.setLabel("Gammalsunk 2.5 tum");
@@ -115,5 +119,23 @@ public class TestApplication {
 		file4.setSize(6758675);
 		Assert.assertEquals("Actually expected to find this file on this device",Match.NO_MATCH, deviceTypeService.joinDevices(file4, storageDevice1, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE));
 		
+	}
+	
+	@Test
+	public void runAppTest_B() {
+		StorageDevice nas = new StorageDevice();
+		nas.setDeviceType(DeviceType.NAS);
+		nas.setLabel("Mitt NAS");
+        deviceTypeService.addStorageDevice(nas);
+        
+        StorageDevice folder = new StorageDevice();
+        folder.setDeviceType(DeviceType.LOCAL_URI);
+        folder.setLabel("Min folder");
+        folder.setPath("./hello");
+		try {
+			deviceTypeService.joinDevices(folder, nas, Operation.CHECK_EXISTANCE_ON_TARGET_DEVICE);
+		} catch (IOException e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 }

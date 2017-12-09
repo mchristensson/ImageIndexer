@@ -27,6 +27,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 @ComponentScan(basePackages = "org.mac.nasbackup.components")
 public class ApplicationConfig {
 
+	@SuppressWarnings("unused")
 	@Autowired
 	private Environment env;
 
@@ -34,7 +35,7 @@ public class ApplicationConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-		sessionFactory.setDataSource(dataSource());
+		sessionFactory.setDataSource(embeddedDataSource());
 		sessionFactory.setPackagesToScan(new String[] { "org.mac.nasbackup.persistance.model" });
 
 		Properties properties = new Properties();
@@ -47,9 +48,8 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
-				// .addScript("classpath:db/drop-all.sql")
+	public DataSource embeddedDataSource() {
+		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).setName("hello")
 				.addScript("classpath:db/create-db.sql").build();
 	}
 

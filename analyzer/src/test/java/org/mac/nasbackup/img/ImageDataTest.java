@@ -1,10 +1,7 @@
 package org.mac.nasbackup.img;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
 
 public class ImageDataTest {
 

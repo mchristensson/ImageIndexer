@@ -23,6 +23,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileMetadataDirectory;
+import com.drew.metadata.photoshop.PhotoshopDirectory;
 
 public class ImageData {
 
@@ -75,7 +76,9 @@ public class ImageData {
 			map.computeIfAbsent(DATE_TIME, f -> dic.getString(ExifIFD0Directory.TAG_DATETIME));
 			map.computeIfAbsent(SOFTWARE, f -> dic.getString(ExifIFD0Directory.TAG_SOFTWARE));
 		}
-
+		if (dic.getClass().isAssignableFrom(PhotoshopDirectory.class)) {
+			
+		}
 		if (dic.getClass().isAssignableFrom(FileMetadataDirectory.class)) {
 			map.computeIfAbsent(FILE_NAME, f -> dic.getString(FileMetadataDirectory.TAG_FILE_NAME));
 			map.computeIfAbsent(FILE_SIZE, f -> dic.getString(FileMetadataDirectory.TAG_FILE_SIZE));

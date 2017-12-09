@@ -1,5 +1,6 @@
 package org.mac.nasbackup.persistance.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.mac.nasbackup.analyzer.Operation;
@@ -20,8 +21,9 @@ public interface StorageDeviceService {
 	 * @param storageDevice the storage device to analyze
 	 * @param reference reference target device (Read only)
 	 * @param operation
+	 * @throws IOException If file read operation fails
 	 */
-	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation);
+	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation) throws IOException;
 	
 	public StorageDevice find(long id);
 

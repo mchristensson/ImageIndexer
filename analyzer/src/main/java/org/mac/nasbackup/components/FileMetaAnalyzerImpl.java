@@ -9,11 +9,11 @@ import java.util.function.Consumer;
 
 import org.mac.nasbackup.analyzer.AnalysisConfiguration;
 import org.mac.nasbackup.analyzer.AnalysisConfigurationImpl;
-import org.mac.nasbackup.analyzer.AnalysisResultStatus;
 import org.mac.nasbackup.img.ImageData;
 import org.mac.nasbackup.persistance.DbAction;
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.service.FileMetaAnalyzer;
+import org.mac.nasbackup.persistance.service.Match;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,9 +50,9 @@ public class FileMetaAnalyzerImpl implements FileMetaAnalyzer {
 						
 						int result = dbAction.checkExistance(imageEntry);
 						cfg.addCount();
-						if (AnalysisResultStatus.FULL_MATCH == result) {
+						if (Match.MATCH_ON_FILE_AND_SIZE_AND_MAKE_AND_MODEL_AND_SOFTWARE == result) {
 							dbAction.handleMatch(cfg, imageEntry);
-						} else if (AnalysisResultStatus.MISSING == result) {
+						} else if (Match.NO_MATCH == result) {
 							dbAction.handleMissing(cfg,imageEntry);	
 						} else {
 							dbAction.handleDefault(cfg, result, imageEntry);

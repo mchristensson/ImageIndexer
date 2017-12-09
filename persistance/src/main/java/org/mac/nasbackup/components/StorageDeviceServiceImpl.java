@@ -1,8 +1,7 @@
 package org.mac.nasbackup.components;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.mac.nasbackup.analyzer.AnalysisConfiguration;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service("storageDeviceService")
 public class StorageDeviceServiceImpl implements StorageDeviceService {
 	private static final Logger logger = LoggerFactory.getLogger(StorageDeviceServiceImpl.class);
-	
+
 	@Autowired
 	StorageDeviceDao storageDeviceDao;
 
@@ -48,13 +47,13 @@ public class StorageDeviceServiceImpl implements StorageDeviceService {
 	}
 
 	@Override
-	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation) {
-
+	public void joinDevices(StorageDevice storageDevice, StorageDevice reference, Operation operation) throws IOException {
+		Path p = storageDevice.getPathAsPath();
 		switch (operation) {
 		case INSERT_IF_NOT_EXISTS_ON_REFERENCE_DEVICE:
-			Path p = Paths.get(new File(storageDevice.getPath()).toURI());
-			//Check existance of files by the  storageDevice's path
-			//Insert non existing
+
+			// Check existance of files by the storageDevice's path
+			// Insert non existing
 			fileAnalyzer.analyzeFolder(p, true, new DbAction<ImageEntry>() {
 
 				@Override
@@ -69,28 +68,53 @@ public class StorageDeviceServiceImpl implements StorageDeviceService {
 
 				@Override
 				public void handleMissing(AnalysisConfiguration cfg, ImageEntry imageEntry) {
-					logger.info("File is not present on reference-device. {}", imageEntry );
+					logger.info("File is not present on reference-device. {}", imageEntry);
 				}
 
 				@Override
 				public void handleMatch(AnalysisConfiguration cfg, ImageEntry imageEntry) {
-					logger.info("File already present on reference-device. {}", imageEntry );
+					logger.info("File already present on reference-device. {}", imageEntry);
 				}
 			});
-			
+
 			break;
-			case INSERT_WITHOUT_EXISTANCE_CHECK:
-				throw new UnsupportedOperationException("INSERT_WITHOUT_EXISTANCE_CHECK is not allowed");
-			case BUILD_REPORT:
-				//Init report
-				//Check existance of files by the  storageDevice's path
-				//Build report
+		case INSERT_WITHOUT_EXISTANCE_CHECK:
+			throw new UnsupportedOperationException("INSERT_WITHOUT_EXISTANCE_CHECK is not allowed");
+		case BUILD_REPORT:
+			// Init report
+			// Check existance of files by the storageDevice's path
+			// Build report
+			break;
+		case CHECK_EXISTANCE_ON_TARGET_DEVICE:
+			// Check existance of files by the storageDevice's path
+
+			fileAnalyzer.analyzeFolder(p, true, new DbAction<ImageEntry>() {
+
+				@Override
+				public int checkExistance(ImageEntry imageEntry) {
+					return imageDao.identifyOnDevice(reference, imageEntry);
+				}
+
+				@Override
+				public void handleDefault(AnalysisConfiguration cfg, int result, ImageEntry imageEntry) {
+					logger.info("Skipping file, not sure how to handle it... ({}): {}", result, imageEntry);
+				}
+
+				@Override
+				public void handleMissing(AnalysisConfiguration cfg, ImageEntry imageEntry) {
+					logger.info("File is not present on reference-device. {}", imageEntry);
+				}
+
+				@Override
+				public void handleMatch(AnalysisConfiguration cfg, ImageEntry imageEntry) {
+					logger.info("File already present on reference-device. {}", imageEntry);
+				}
+			});
 			break;
 		default:
-			break;
+			throw new UnsupportedOperationException(operation.name() + " is not yet supported");
 		}
 		// Ta fram sökvägen till mappen som ska analyseras
-
 
 	}
 

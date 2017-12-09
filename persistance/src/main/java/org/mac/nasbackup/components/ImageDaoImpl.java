@@ -2,7 +2,6 @@ package org.mac.nasbackup.components;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 import org.mac.nasbackup.analyzer.ImageEntryComparator;
 import org.mac.nasbackup.persistance.dao.ImageDao;

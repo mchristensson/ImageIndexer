@@ -1,5 +1,9 @@
 package org.mac.nasbackup.persistance.model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity(name = "StorageDevice")
 @Table(name = "storagedevice")
@@ -78,6 +83,17 @@ public class StorageDevice {
 
 	public void setImageEntries(List<ImageEntry> imageEntries) {
 		this.imageEntries = imageEntries;
+	}
+	
+	@Transient
+	public Path getPathAsPath() throws IOException {
+		File f = new File(getPath());
+		if (!f.exists()) {
+			throw new IOException("Path set for device does not exist: " + getPath());
+		} else if (!f.isDirectory()) {
+			throw new IOException("Path is not a folder: " + getPath());
+		}
+		return  Paths.get(f.toURI());
 	}
 	
 }

@@ -1,7 +1,6 @@
 package org.mac.nasbackup.persistance.dao;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.mac.nasbackup.persistance.model.ImageEntry;
 import org.mac.nasbackup.persistance.model.StorageDevice;
